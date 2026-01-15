@@ -23,7 +23,7 @@ ENV PATH=${MAMBA_ROOT_PREFIX}/bin:$PATH
 ENV TORCH_CUDA_ARCH_LIST="8.9"
 ENV TCNN_CUDA_ARCHITECTURES=89
 # Limits parallel CPU jobs to keep memory usage low on WSL (5GB limit)
-# ENV MAX_JOBS=1 
+ENV MAX_JOBS=1 
 # --------------------------------------
 
 # Clone SAM3D Objects repo
@@ -62,5 +62,6 @@ RUN chmod +x /workspace/start.sh
 ENV SAM3D_TAG=hf
 ENV SAM3D_CONFIG=checkpoints/hf/pipeline.yaml
 ENV HF_REPO=facebook/sam-3d-objects
+
 
 CMD ["/workspace/start.sh"]
