@@ -20,8 +20,8 @@ ENV PATH=${MAMBA_ROOT_PREFIX}/bin:$PATH
 
 # --- RTX 4090 & BUILD OPTIMIZATIONS ---
 # Fixes IndexError by targeting RTX 4090 architecture (8.9)
-ENV TORCH_CUDA_ARCH_LIST="8.9"
-ENV TCNN_CUDA_ARCHITECTURES=89
+# ENV TORCH_CUDA_ARCH_LIST="8.9"
+# ENV TCNN_CUDA_ARCHITECTURES=89
 # Limits parallel CPU jobs to keep memory usage low on WSL (5GB limit)
 ENV MAX_JOBS=1 
 # --------------------------------------
@@ -65,3 +65,4 @@ ENV HF_REPO=facebook/sam-3d-objects
 
 
 CMD ["/workspace/start.sh"]
+
