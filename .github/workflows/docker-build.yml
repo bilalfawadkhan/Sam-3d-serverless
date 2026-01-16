@@ -1,17 +1,30 @@
-name: Build and Push Docker Image
+name: Build and Push SAM3D Serverless
 
 on:
   push:
-    branches: [ "main" ] # Triggers on push to main
-  workflow_dispatch:      # Allows manual triggering
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Large builds can take 30-60+ mins
-    timeout-minutes: 120 
+    # Compiling heavy 3D libraries can take a long time
+    timeout-minutes: 180 
 
     steps:
+      # 1. CRITICAL: Free up ~30GB of space by removing unused tools
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      # 2. Setup and Login
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -24,14 +37,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # 3. Build and Push with Layer Caching
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          # Replace 'your-username/your-repo' with your actual Docker Hub details
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sam3d-objects:latest
-          # IMPORTANT: Use GHA cache to speed up re-builds of heavy layers
+          # Replace with your actual Docker Hub tag
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sam3d-serverless:latest
+          # Build specifically for L4/RunPod architecture
+          platforms: linux/amd64
+          # Use GHA cache to avoid re-compiling pytorch3d on every run
           cache-from: type=gha
           cache-to: type=gha,mode=max
